@@ -1,0 +1,211 @@
+# Gam3iya task bank (frontend-first v2) — gates, inputs and sign-offs
+# Source: plan/technical-plan.md §2, §3, §7, §9
+# Schema: see M0.yaml header. Items here carry base_hours 0 (not student build effort).
+
+list: 'Gates, inputs & sign-offs'
+
+gates:
+  - id: G-M0
+    name: 'M0 exit gate: Design Ready'
+    week_due: 2
+    owner: both
+    priority: urgent
+    user_story: 'As the mentor, I want every P0 screen designed and the toolchain proven before feature work, so that M1 to M5 do not build on guesses.'
+    description: |
+      Go / no-go at the end of week 2. Repo, CI and AGENTS.md are in place; the Figma file holds
+      13 screens with variables, components and states; ADR-001, ADR-002 and ADR-008 are written.
+    acceptance_criteria:
+      - 'Protected main, PR template and green CI on a pull request'
+      - 'Figma file: S01 to S13 at 360 px; S03, S06, S08 also at 768 and 1280 px'
+      - 'Every P0 frame annotated with story IDs and passing the Design Ready checklist'
+      - 'design/DESIGN.md and draft tokens.css committed'
+      - 'ADR-001, ADR-002, ADR-008 written; calibration log has entries for every M0 work package'
+    depends_on: [M0-0.1, M0-0.2, M0-0.3, M0-0.4, M0-0.5, M0-0.6, M0-0.7, M0-0.8, M0-0.9]
+    refs: ['Plan §2', 'design/stitch-prompt.md Part E']
+
+  - id: G-W4
+    name: 'Week-4 checkpoint: measured actual vs. estimated hours'
+    week_due: 4
+    owner: both
+    priority: urgent
+    user_story: 'As the mentor, I want the real estimation ratio measured early, so that scope is cut in week 4 instead of the deadline slipping in week 14.'
+    description: |
+      Compute actual / estimated per work type from the calibration log. At or below 1.25
+      overall: continue. Above: apply the cut order (Plan §3) until the remaining estimate fits
+      the remaining capacity. Tests, accessibility checks, the pull request workflow, money
+      integrity and explain-back are never cut. Record the result in the plan.
+    acceptance_criteria:
+      - 'Ratio per work type and overall recorded in plan/technical-plan.md §10'
+      - 'Cut decision recorded (none, or which cut-order items applied)'
+      - 'Affected tasks re-scoped or moved to a Deferred list'
+    depends_on: [G-M0, M1-1.6]
+    refs: ['Plan §3']
+
+  - id: G-M1
+    name: 'M1 exit gate: design system and UI craft'
+    week_due: 5
+    owner: both
+    priority: high
+    user_story: 'As the mentor, I want a verified component library and shell, so that product screens are composed from tested parts.'
+    description: |
+      Gallery with every primitive in LTR and RTL, responsive shell, visual QA against Figma done.
+    acceptance_criteria:
+      - 'Gallery shows every primitive with all states in LTR and RTL'
+      - 'App shell correct at 360, 768, 1280; language switcher works'
+      - 'Axe zero serious or critical on the gallery; Lighthouse accessibility 90 or higher on the shell'
+      - 'ADR-003 and ADR-007 written; mentor demo done'
+    depends_on: [M1-1.1, M1-1.2, M1-1.3, M1-1.4, M1-1.5, M1-1.6, M1-1.7, M1-1.8, M1-1.9, M1-1.10]
+    refs: ['Plan §2']
+
+  - id: G-M2
+    name: 'M2 exit gate: domain and React 19 core'
+    week_due: 8
+    owner: both
+    priority: high
+    user_story: 'As the mentor, I want the business rules proven by tests and the React fundamentals shown unaided, so that the data layer starts on solid ground.'
+    description: |
+      PRD Appendix A examples pass as tests; wizard and optimistic mark-paid work against seed data.
+    acceptance_criteria:
+      - 'A1 to A5 pass as automated tests; packages/domain coverage 90% or higher in CI'
+      - 'Create-circle wizard validates in Arabic and English'
+      - 'Mark-paid uses useActionState and useOptimistic with rollback demonstrated (A6)'
+      - 'She explains render cycle, state updates and effects at a whiteboard; ADR-004 written'
+    depends_on: [M2-2.1, M2-2.2, M2-2.3, M2-2.4, M2-2.5, M2-2.6, M2-2.7, M2-2.8, M2-2.9]
+    refs: ['Plan §2']
+
+  - id: G-M3
+    name: 'M3 exit gate: product flows against the mock API'
+    week_due: 11
+    owner: both
+    priority: urgent
+    user_story: 'As the mentor, I want every P0 flow demoable end to end, so that quality work in M4 has a complete product to test.'
+    description: |
+      Stories A1 to A3, B1 to B4, C1 to C4, D1 to D3 run as Mona and Karim against the mock API.
+    acceptance_criteria:
+      - 'All P0 flows demoable end to end as organizer and as member (A7 verified)'
+      - 'Loading, empty and error states on every data screen (E3)'
+      - 'All requests parsed with Zod; no fetch outside the API client'
+      - 'ADR-005 and ADR-006 written; demo done'
+    depends_on: [M3-3.1, M3-3.2, M3-3.3, M3-3.4, M3-3.5, M3-3.6, M3-3.7, M3-3.8, M3-3.9, M3-3.10]
+    refs: ['Plan §2', 'PRD §5']
+
+  - id: G-M4
+    name: 'M4 exit gate: quality and delivery'
+    week_due: 14
+    owner: both
+    priority: urgent
+    user_story: 'As the mentor, I want tests, accessibility, performance and CI/CD proven, so that the app is shippable.'
+    description: |
+      Coverage gates, e2e in CI, accessibility audit, performance budget, preview deploys and
+      security checklist.
+    acceptance_criteria:
+      - 'Web coverage 70% or higher; domain 90% or higher'
+      - 'Playwright main flow and RTL 360 px flow green in CI'
+      - 'Axe zero serious or critical; keyboard and screen reader pass recorded'
+      - 'Lighthouse mobile 90 or higher on the shell; initial JS under 200 kB gzip; CI under 6 minutes'
+      - 'Preview deploys work; security checklist has zero critical items; ADR-009 and ADR-011 written'
+    depends_on: [M4-4.1, M4-4.2, M4-4.3, M4-4.4, M4-4.5, M4-4.6, M4-4.7, M4-4.8, M4-4.9]
+    refs: ['Plan §2', 'SRS §5']
+
+  - id: G-M5
+    name: 'M5 exit gate: ship and interview readiness'
+    week_due: 16
+    owner: both
+    priority: urgent
+    user_story: 'As the mentor, I want the project shipped with a case study and rehearsed interviews, so that the 16 weeks convert into a portfolio and offers.'
+    description: |
+      Public Next.js pages live, case-study README, ADRs closed, system design reviewed, mock
+      interviews scored.
+    acceptance_criteria:
+      - 'apps/site deployed with landing and invite preview; Lighthouse 90 or higher in all four categories'
+      - 'Case-study README published; all ADRs Accepted or Reversed with evidence'
+      - 'Frontend system design document reviewed by the mentor'
+      - 'Three mock interviews at Level 3 or higher in 6 of 8 rubric areas'
+    depends_on: [M5-5.1, M5-5.2, M5-5.3, M5-5.4, M5-5.5, M5-5.6, M5-5.7]
+    refs: ['Plan §2']
+
+  - id: G-FE
+    name: 'Frontend gate: ready to plan backend work'
+    week_due: 16
+    owner: abdullah
+    priority: high
+    user_story: 'As the mentor, I want proof of frontend independence before any backend is planned, so that the next phase builds on mastery.'
+    description: |
+      Esraa builds a new feature from a Figma frame to a tested, accessible, bilingual pull
+      request in under 6 hours without hints beyond the ladder's level 2. Passing this gate is
+      the only trigger for planning a backend phase.
+    acceptance_criteria:
+      - 'A new feature is delivered from a Figma frame within 6 hours'
+      - 'The pull request passes CI, axe and explain-back'
+      - 'Decision recorded: plan backend phase, or extend frontend work'
+    depends_on: [G-M5]
+    refs: ['Plan §3 frontend gate']
+
+
+inputs:
+  - {
+      id: IN-01,
+      name: 'Laptop, GitHub account, Figma account, Google account for Stitch',
+      owner_external: 'Esraa',
+      week_due: 1,
+      blocks: [M0-0.1, M0-0.6],
+    }
+  - {
+      id: IN-02,
+      name: 'Stitch to Figma export verified on her account (fallback per ADR-008 if not)',
+      owner_external: 'Abdullah',
+      week_due: 2,
+      blocks: [M0-0.6, M0-0.8],
+    }
+  - {
+      id: IN-03,
+      name: 'Hosting free-tier account (Vercel, Netlify or Cloudflare Pages)',
+      owner_external: 'Esraa',
+      week_due: 12,
+      blocks: [M4-4.8],
+    }
+  - {
+      id: IN-04,
+      name: 'Native Arabic reviewer available for P0 screens (plus an early look at three screens in week 2)',
+      owner_external: 'Abdullah',
+      week_due: 14,
+      blocks: [M5-5.4],
+    }
+  - {
+      id: IN-05,
+      name: "Five real organizers (or friends running a gam'iya) to test the app",
+      owner_external: 'Abdullah',
+      week_due: 14,
+      blocks: [M5-5.4],
+    }
+  - {
+      id: IN-06,
+      name: 'Two engineers for mock interviews and the 8-area rubric',
+      owner_external: 'Abdullah',
+      week_due: 15,
+      blocks: [M5-5.7, G-M5],
+    }
+
+signoffs:
+  - {
+      id: SO-1,
+      name: 'Gam3iya is the single project, now frontend-only for the 16 weeks',
+      week_due: 1,
+    }
+  - { id: SO-2, name: 'Backend is out of the plan until the frontend gate (G-FE)', week_due: 1 }
+  - {
+      id: SO-3,
+      name: 'Capacity: 8 independent hours per week and 2 live sessions of 90 minutes',
+      week_due: 1,
+    }
+  - {
+      id: SO-4,
+      name: 'Tailwind v4 with Radix (ADR-003) and Next.js for public pages only (ADR-010)',
+      week_due: 4,
+    }
+  - {
+      id: SO-5,
+      name: 'AI policy: tutor weeks 1 to 5, pair from week 6, Stitch and generated code are reference only',
+      week_due: 1,
+    }
+  - { id: SO-6, name: 'Corrections UI (C5) is P1 in v2', week_due: 4 }

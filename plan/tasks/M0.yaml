@@ -1,0 +1,243 @@
+# Gam3iya task bank (frontend-first v2) — M0 · Foundations and design handoff
+# Source: plan/technical-plan.md, plan/milestones.md
+#
+# Schema per task (adapted from the Phase 1 task bank; no AI multiplier, so hours only):
+# id: M<n>-<wp>            e.g. M1-1.2 (unique)
+# name: short imperative title
+# track: "Track X: ..."
+# owner: esraa | abdullah | both
+# work_type: setup | design | html-css | ui | domain | react | testing | devops | docs
+# base_hours: number (planned build hours, from the plan; weekly total is 7 planned + 1 buffer)
+# week: 1..16
+# priority: urgent (critical path) | high | normal
+# user_story: "As a <role>, I want <capability>, so that <outcome>."
+# description: | 2–4 lines: what to build and the constraints from the PRD, SRS, AGENTS.md, ADRs
+# subtasks: ["<id> <text> (<hours>)"]  (create as ClickUp subtasks)
+# acceptance_criteria: list of testable checks (3–5)
+# depends_on: [task ids, or G-*/IN-* ids from gates-and-inputs.yaml]
+# blocked_by_inputs: [IN-xx] (optional)
+# refs: ["PRD C1", "SRS FR-PAY-06", "ADR-003", "Plan §3"]
+# tags: [short, lowercase]
+
+milestone: M0
+title: Foundations and design handoff
+list: 'M0 · Foundations and design handoff'
+
+tasks:
+  - id: M0-0.1
+    name: 'Set up dev environment and Git workflow basics'
+    track: 'Track 0A: Environment and scaffold'
+    owner: esraa
+    work_type: setup
+    base_hours: 1.5
+    week: 1
+    priority: urgent
+    user_story: 'As a student developer, I want a working toolchain and a first pull request, so that every later task starts from a clean, reviewable workflow.'
+    description: |
+      Node LTS via fnm or nvm, pnpm through Corepack, VS Code extensions. Create the GitHub repo
+      and merge a README change through a pull request reviewed by the mentor.
+    subtasks:
+      - '0.1.1 Install Node LTS, enable pnpm, configure VS Code (0.5)'
+      - '0.1.2 Create repo, .gitignore, .nvmrc, first commit, working authentication (0.5)'
+      - '0.1.3 Branch, commit, pull request, review and merge (0.5)'
+    acceptance_criteria:
+      - 'node, pnpm and git run from a fresh terminal'
+      - 'A README change is merged through a reviewed pull request'
+      - 'She explains branch, commit, remote and pull request without notes'
+    depends_on: []
+    blocked_by_inputs: [IN-01]
+    refs: ['Plan §7', 'AGENTS.md §7']
+    tags: [setup, git]
+
+  - id: M0-0.2
+    name: 'Scaffold monorepo and web app (React 19, Vite, strict TypeScript)'
+    track: 'Track 0A: Environment and scaffold'
+    owner: esraa
+    work_type: setup
+    base_hours: 2
+    week: 1
+    priority: urgent
+    user_story: 'As a student developer, I want the monorepo structure in place, so that the web app, domain and contracts packages share one workflow from day one.'
+    description: |
+      Starter is pre-built by the mentor (pnpm workspaces, apps/web, packages/domain and
+      packages/contracts, strict TypeScript, Vitest). Her work: explain every file, fix three
+      seeded breakages, and extend the scaffold by one change of her own. Follow docs/scaffold.md.
+    subtasks:
+      - '0.2.1 pnpm-workspace.yaml, root scripts, tsconfig.base.json strict (0.5)'
+      - '0.2.2 Vite react-ts app on the latest React 19, template demo removed (0.5)'
+      - '0.2.3 Domain and contracts stubs imported through the workspace protocol (0.5)'
+      - '0.2.4 Path aliases and one smoke test per workspace (0.5)'
+    acceptance_criteria:
+      - 'pnpm dev shows a page; pnpm test passes in every workspace'
+      - 'Web app imports a function from packages/domain'
+      - 'Structure matches docs/scaffold.md'
+    depends_on: [M0-0.1]
+    refs: ['ADR-001', 'ADR-002', 'docs/scaffold.md']
+    tags: [monorepo, scaffolding]
+
+  - id: M0-0.3
+    name: 'Set up lint, format, commit hooks and first CI'
+    track: 'Track 0A: Environment and scaffold'
+    owner: esraa
+    work_type: devops
+    base_hours: 1.5
+    week: 1
+    priority: urgent
+    user_story: 'As a student developer, I want rules enforced by tools and CI, so that quality does not depend on remembering them.'
+    description: |
+      Starter config is pre-built (ESLint flat config, Prettier, Husky, lint-staged, ci.yml, PR
+      template). Her work: explain each rule, write one new lint rule or CI step herself, and
+      enable branch protection on main in GitHub settings.
+    subtasks:
+      - '0.3.1 ESLint flat config and Prettier (0.5)'
+      - '0.3.2 Husky and lint-staged (0.5)'
+      - '0.3.3 ci.yml, PR template with explain-back box, branch protection (0.5)'
+    acceptance_criteria:
+      - 'A deliberate lint error blocks the pull request in CI'
+      - 'main is protected and requires green CI and one review'
+      - 'PR template contains story IDs, screenshots, tests, calibration, explain-back'
+    depends_on: [M0-0.2]
+    refs: ['SRS NFR-MNT-02', 'AGENTS.md §7, §8']
+    tags: [ci, lint, github-actions]
+
+  - id: M0-0.4
+    name: 'Read PRD and SRS, ask questions, start calibration log'
+    track: 'Track 0A: Environment and scaffold'
+    owner: both
+    work_type: docs
+    base_hours: 1
+    week: 1
+    priority: urgent
+    user_story: 'As a student developer, I want to question the requirements early and log my estimates, so that I build the right thing and learn to estimate honestly.'
+    description: |
+      She reads the PRD and SRS and writes at least ten questions in docs/questions.md. Create
+      plan/calibration-log.csv and commit AGENTS.md. Feeds G-W4.
+    subtasks:
+      - '0.4.1 Read PRD and SRS; write 10+ questions (0.5)'
+      - '0.4.2 Create calibration log; commit AGENTS.md; set Current week (0.5)'
+    acceptance_criteria:
+      - 'docs/questions.md has at least 10 specific questions, each citing a PRD or SRS section'
+      - 'Every answer that changes a requirement lands as a pull request to docs/'
+      - 'Calibration log columns: work package, type, estimate, actual, AI used, note'
+    depends_on: []
+    refs: ['Plan §3', 'AGENTS.md §1']
+    tags: [docs, calibration]
+
+  - id: M0-0.5
+    name: 'Diagnostic task: typed payments list with status filter'
+    track: 'Track 0A: Environment and scaffold'
+    owner: both
+    work_type: react
+    base_hours: 1
+    week: 1
+    priority: high
+    user_story: 'As a mentor, I want a small unaided build from her, so that I can set the pace for weeks 3 to 8 on evidence.'
+    description: |
+      A typed React component listing payments with a status filter and a piaster-to-EGP
+      formatter, no libraries. Reviewed line by line in session.
+    subtasks:
+      - '0.5.1 Build and submit the diagnostic as a pull request (1)'
+    acceptance_criteria:
+      - 'Filter and formatter work for the Appendix A A4 example'
+      - 'No floating-point money arithmetic'
+      - 'Mentor review recorded with a starting-level note'
+    depends_on: [M0-0.2]
+    refs: ['PRD Appendix A A4', 'Plan §3']
+    tags: [diagnostic, react]
+
+  - id: M0-0.6
+    name: 'Stitch round 1: generate S01 to S04'
+    track: 'Track 0B: Design handoff'
+    owner: esraa
+    work_type: design
+    base_hours: 2
+    week: 2
+    priority: urgent
+    user_story: 'As a student developer, I want first-draft screens for the entry flow, so that I can implement from a design instead of guessing.'
+    description: |
+      Create the Stitch project; paste the master prompt and DESIGN.md from design/stitch-prompt.md.
+      One screen per prompt. She writes the refinement prompts herself.
+    subtasks:
+      - '0.6.1 Create project; paste Part A and Part B (0.5)'
+      - '0.6.2 Generate S01 to S04 on mobile (1)'
+      - '0.6.3 Critique with Part E; write two refinement prompts (0.5)'
+    acceptance_criteria:
+      - 'Four mobile screens exist with Arabic and English data'
+      - 'Each screen passes the critique checklist or has a written fix list'
+      - 'Two refinement prompts are hers, reviewed before the screens'
+    depends_on: [M0-0.4]
+    blocked_by_inputs: [IN-02]
+    refs: ['design/stitch-prompt.md', 'ADR-008', 'PRD B1']
+    tags: [stitch, design]
+
+  - id: M0-0.7
+    name: 'Stitch round 2: generate S05 to S13 and the states kit'
+    track: 'Track 0B: Design handoff'
+    owner: esraa
+    work_type: design
+    base_hours: 1.5
+    week: 2
+    priority: urgent
+    user_story: 'As a student developer, I want screens for every P0 flow and every state, so that no screen is invented while coding.'
+    description: |
+      S05 to S08 first, then S09, S10, S12, S13 and the states kit S11 (loading, empty, error, 404).
+    subtasks:
+      - '0.7.1 Generate S05 to S08 (0.75)'
+      - '0.7.2 Generate S09, S10, S12, S13 and S11 (0.75)'
+    acceptance_criteria:
+      - 'All 13 screens exist with data matching PRD Appendix A'
+      - 'S11 covers skeleton, empty, error and 404 states'
+      - 'No screen implies the app moves money'
+    depends_on: [M0-0.6]
+    refs: ['PRD §7', 'PRD E3']
+    tags: [stitch, design, states]
+
+  - id: M0-0.8
+    name: 'Clean up in Figma: variables, components, auto layout, breakpoints'
+    track: 'Track 0B: Design handoff'
+    owner: esraa
+    work_type: design
+    base_hours: 2.5
+    week: 2
+    priority: urgent
+    user_story: 'As a student developer, I want a Figma file with real variables and components, so that code tokens and components map one to one.'
+    description: |
+      Copy to Figma (fallback in ADR-008 if export is unavailable). One page per flow, consistent
+      names. Variables for color, spacing, radius, text. Components with variants. 768 and 1280 px
+      frames for S03, S06, S08.
+    subtasks:
+      - '0.8.1 Import, one page per flow, consistent frame and layer names (0.5)'
+      - '0.8.2 Variables and text styles from DESIGN.md (0.75)'
+      - '0.8.3 Components with variants: Button, Input, StatusBadge, Card, ListItem, Tabs (0.5)'
+      - '0.8.4 Auto layout and tablet and desktop frames for S03, S06, S08 (0.75)'
+    acceptance_criteria:
+      - 'No hard-coded colors remain in frames; components use variables'
+      - 'Every P0 screen has a 360 px frame; S03, S06, S08 also 768 and 1280'
+      - 'Status badges show icon and text'
+    depends_on: [M0-0.7]
+    refs: ['ADR-008', 'SRS FR-UI-03, FR-UI-02']
+    tags: [figma, variables, components]
+
+  - id: M0-0.9
+    name: 'Design review and handoff; tokens exported'
+    track: 'Track 0B: Design handoff'
+    owner: both
+    work_type: design
+    base_hours: 1
+    week: 2
+    priority: urgent
+    user_story: 'As a mentor, I want a sign-off against the Design Ready checklist, so that coding starts only from complete frames.'
+    description: |
+      Mentor review against Part E of the Stitch pack. Annotate story IDs and states on frames.
+      Export tokens into design/DESIGN.md and a draft tokens.css. Closes G-M0.
+    subtasks:
+      - '0.9.1 Review against Design Ready checklist (0.5)'
+      - '0.9.2 Annotate story IDs; link frames in design/figma-links.md (0.25)'
+      - '0.9.3 Export tokens to DESIGN.md and draft tokens.css (0.25)'
+    acceptance_criteria:
+      - 'Every P0 frame is annotated with its story IDs'
+      - 'Sign-off recorded in design/design-decisions.md'
+      - 'tokens.css values match Figma variables'
+    depends_on: [M0-0.8]
+    refs: ['design/stitch-prompt.md Part E', 'ADR-008']
+    tags: [handoff, design-ready, tokens]

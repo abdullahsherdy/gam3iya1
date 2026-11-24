@@ -1,0 +1,244 @@
+# Schema: see M0.yaml
+milestone: M1
+title: Design system and UI craft
+list: 'M1 · Design system and UI craft'
+tasks:
+  # ---------------------------------------------------------------- Track 1A: HTML and CSS (week 3)
+  - id: M1-1.1
+    name: 'Hand-write the circle detail page in semantic HTML'
+    track: 'Track 1A: HTML and CSS'
+    owner: esraa
+    work_type: html-css
+    base_hours: 2.5
+    week: 3
+    priority: high
+    user_story: 'As a student developer, I want to build S06 in plain semantic HTML first, so that accessibility comes from structure, not from patches.'
+    description: |
+      Static HTML for S06 on mobile: landmarks, heading order, a real table for the schedule,
+      labelled form controls. No framework, no utility classes.
+    subtasks:
+      - '1.1.1 Build S06 with landmarks, headings, table, labelled controls (1.5)'
+      - '1.1.2 Validate markup; keyboard-only and screen reader quick pass (0.5)'
+      - '1.1.3 Explain-back: why button and not div (0.5)'
+    acceptance_criteria:
+      - 'Markup validates; one h1; heading levels never skip'
+      - 'Every control is reachable and operable by keyboard with visible focus'
+      - 'Schedule is a real table with header cells'
+    depends_on: [G-M0]
+    refs: ['SRS NFR-A11Y-01', 'PRD E2', 'Figma S06']
+    tags: [html, accessibility, semantics]
+
+  - id: M1-1.2
+    name: 'Style it with CSS tokens, flexbox, grid and breakpoints'
+    track: 'Track 1A: HTML and CSS'
+    owner: esraa
+    work_type: html-css
+    base_hours: 2.5
+    week: 3
+    priority: high
+    user_story: 'As a student developer, I want to master layout in plain CSS, so that I understand what any utility framework generates.'
+    description: |
+      tokens.css as custom properties from Figma. Mobile-first layout with flexbox and grid, no
+      fixed widths, breakpoints at 768 and 1280, one container query.
+    subtasks:
+      - '1.2.1 tokens.css from Figma variables (0.5)'
+      - '1.2.2 Mobile-first layout with flexbox and grid (1)'
+      - '1.2.3 Breakpoints and one container query (0.5)'
+      - '1.2.4 Overlay on the Figma frame and list differences (0.5)'
+    acceptance_criteria:
+      - 'No horizontal scroll at 360 px (PRD E1)'
+      - 'Layout matches Figma at 360, 768 and 1280 within the logged differences'
+      - 'Every color, space and radius comes from a token'
+    depends_on: [M1-1.1, M0-0.9]
+    refs: ['SRS FR-UI-03', 'PRD E1']
+    tags: [css, responsive, tokens]
+
+  - id: M1-1.3
+    name: 'Right-to-left layout and Intl formatting'
+    track: 'Track 1A: HTML and CSS'
+    owner: esraa
+    work_type: html-css
+    base_hours: 2
+    week: 3
+    priority: high
+    user_story: 'As an Arabic-speaking member, I want the page mirrored correctly with Cairo dates and EGP amounts, so that it reads naturally.'
+    description: |
+      Convert physical to logical properties, switch dir and lang, decide which icons mirror.
+      Format dates with Intl and Africa/Cairo and money as EGP in ar-EG and en-EG.
+    subtasks:
+      - '1.3.1 Physical to logical properties (0.75)'
+      - '1.3.2 dir and lang switching; icon mirroring rules (0.5)'
+      - '1.3.3 Intl.DateTimeFormat Cairo and Intl.NumberFormat EGP (0.75)'
+    acceptance_criteria:
+      - 'Page is correct at 360 px in both directions'
+      - 'Only directional icons mirror; check marks and numbers do not'
+      - '5 Nov 2026 and EGP 1,000.50 format correctly in both locales'
+    depends_on: [M1-1.2]
+    refs: ['SRS FR-I18N-02, FR-I18N-03', 'PRD G5', 'ADR-007']
+    tags: [rtl, i18n, intl]
+
+  # ---------------------------------------------------------------- Track 1B: Design system (week 4)
+  - id: M1-1.4
+    name: 'Adopt Tailwind v4 on the design tokens'
+    track: 'Track 1B: Design system'
+    owner: esraa
+    work_type: ui
+    base_hours: 2
+    week: 4
+    priority: high
+    user_story: 'As a student developer, I want Tailwind mapped to the Figma tokens, so that utilities and design cannot drift apart.'
+    description: |
+      Install Tailwind v4, map tokens.css into the theme, use logical utilities and rtl: variants,
+      migrate the week 3 page. ADR-003 gets its evidence here.
+    subtasks:
+      - '1.4.1 Install and map tokens into the theme (0.75)'
+      - '1.4.2 Logical utilities and rtl: variants (0.5)'
+      - '1.4.3 Migrate the static page to Tailwind (0.75)'
+    acceptance_criteria:
+      - 'Migrated page is visually identical to the plain CSS version'
+      - 'No raw hex or arbitrary values without a Figma node comment'
+      - 'Layout classes use ms-, me-, ps-, pe-, never ml-, mr-'
+    depends_on: [M1-1.3]
+    refs: ['ADR-003', 'AGENTS.md §5 Styling']
+    tags: [tailwind, tokens]
+
+  - id: M1-1.5
+    name: 'Build core UI primitives'
+    track: 'Track 1B: Design system'
+    owner: esraa
+    work_type: ui
+    base_hours: 2.5
+    week: 4
+    priority: urgent
+    user_story: 'As a student developer, I want reusable primitives matching Figma, so that every screen is composed, not restyled.'
+    description: |
+      Button (variants, loading), Field (label, hint, error), Card, StatusBadge (icon plus text),
+      Skeleton, Spinner, each with every state, listed on a gallery route.
+    subtasks:
+      - '1.5.1 Button, Field, Card, StatusBadge, Skeleton, Spinner (2)'
+      - '1.5.2 Gallery route listing all states (0.5)'
+    acceptance_criteria:
+      - 'StatusBadge shows icon and text for confirmed, marked, pending, late'
+      - 'Field error is associated through aria-describedby'
+      - 'Every primitive works in LTR and RTL'
+    depends_on: [M1-1.4]
+    refs: ['SRS FR-UI-02, FR-UI-04', 'Figma components']
+    tags: [components, design-system]
+
+  - id: M1-1.6
+    name: 'Build overlay primitives on Radix'
+    track: 'Track 1B: Design system'
+    owner: esraa
+    work_type: ui
+    base_hours: 2.5
+    week: 4
+    priority: urgent
+    user_story: 'As a keyboard and screen reader user, I want dialogs, tabs and toasts that manage focus correctly, so that I can complete the main flow.'
+    description: |
+      Dialog (bottom sheet on mobile), Tabs, Toast, Select on Radix. She studies what focus
+      management does and documents each component's API. Triggers the week-4 checkpoint.
+    subtasks:
+      - '1.6.1 Dialog, Tabs, Toast, Select; focus returns to the trigger (1.5)'
+      - '1.6.2 Manual keyboard test of each; notes (0.5)'
+      - '1.6.3 One paragraph of API docs per component (0.5)'
+    acceptance_criteria:
+      - 'Escape closes dialogs and focus returns to the trigger'
+      - 'Tabs follow arrow-key behaviour'
+      - 'Calibration ratio computed at the end of the week (G-W4)'
+    depends_on: [M1-1.5]
+    refs: ['SRS NFR-A11Y-01', 'Plan §3']
+    tags: [radix, dialog, accessibility, checkpoint]
+
+  # ---------------------------------------------------------------- Track 1C: App shell and QA (week 5)
+  - id: M1-1.7
+    name: 'Build the responsive app shell'
+    track: 'Track 1C: App shell and QA'
+    owner: esraa
+    work_type: ui
+    base_hours: 2
+    week: 5
+    priority: high
+    user_story: 'As a user, I want consistent navigation on phone and desktop with a language switcher, so that I always know where I am.'
+    description: |
+      Header, mobile bottom navigation, desktop side navigation, skip link, language switcher.
+    subtasks:
+      - '1.7.1 Header, bottom nav, side nav, skip link, language switcher (1.25)'
+      - '1.7.2 Check at 360, 768, 1280 in LTR and RTL (0.75)'
+    acceptance_criteria:
+      - 'Skip link is the first focusable element'
+      - 'Switching language flips direction without a reload'
+      - 'Shell matches Figma at all three widths'
+    depends_on: [M1-1.5, M1-1.3]
+    refs: ['SRS FR-I18N-02', 'PRD A3']
+    tags: [shell, navigation]
+
+  - id: M1-1.8
+    name: 'Set up Storybook component workshop'
+    track: 'Track 1C: App shell and QA'
+    owner: esraa
+    work_type: ui
+    base_hours: 2
+    week: 5
+    priority: normal
+    user_story: 'As a student developer, I want every primitive documented with a direction toggle, so that RTL regressions are visible.'
+    description: |
+      Storybook with Vite and Tailwind, stories for each primitive, RTL toolbar toggle,
+      accessibility addon. Cut-order item 2 replaces it with a /dev/components gallery.
+    subtasks:
+      - '1.8.1 Storybook with Vite and Tailwind (0.5)'
+      - '1.8.2 Stories for every primitive with RTL toggle (1)'
+      - '1.8.3 Accessibility addon; fix findings (0.5)'
+    acceptance_criteria:
+      - 'Every primitive has a story with all states in LTR and RTL'
+      - 'Accessibility addon reports no serious violations'
+      - 'Storybook builds in CI'
+    depends_on: [M1-1.6]
+    refs: ['SRS FR-UI-04', 'Plan §3 cut order']
+    tags: [storybook, gallery]
+
+  - id: M1-1.9
+    name: 'Visual QA against Figma'
+    track: 'Track 1C: App shell and QA'
+    owner: esraa
+    work_type: ui
+    base_hours: 2
+    week: 5
+    priority: high
+    user_story: 'As a student developer, I want a checklist-driven comparison with Figma, so that fidelity is measured, not eyeballed.'
+    description: |
+      Per-component checklist (spacing, type, color, states). Fix differences; log accepted
+      differences with a reason.
+    subtasks:
+      - '1.9.1 Per-component checklist (1)'
+      - '1.9.2 Fix differences; log accepted ones (1)'
+    acceptance_criteria:
+      - 'Every primitive and the shell are checked at three widths'
+      - 'Each accepted difference has a written reason'
+      - 'Axe reports zero serious or critical on the gallery'
+    depends_on: [M1-1.7, M1-1.8]
+    refs: ['SRS FR-UI-03', 'NFR-A11Y-02']
+    tags: [qa, fidelity]
+
+  - id: M1-1.10
+    name: 'M1 demo, retro and ADRs 003 and 007'
+    track: 'Track 1C: App shell and QA'
+    owner: both
+    work_type: docs
+    base_hours: 1
+    week: 5
+    priority: high
+    user_story: 'As a mentor, I want a demo and written decisions, so that M1 closes on evidence.'
+    description: |
+      Demo of gallery and shell. Review the calibration log. Write ADR-003 (styling) and
+      ADR-007 (i18n).
+    subtasks:
+      - '1.10.1 Demo the gallery and shell (0.25)'
+      - '1.10.2 Calibration review (0.25)'
+      - '1.10.3 Write ADR-003 and ADR-007 (0.5)'
+    acceptance_criteria:
+      - 'ADR-003 and ADR-007 marked Accepted or Reversed with evidence'
+      - 'Lighthouse accessibility 90 or higher on the shell'
+      - 'M1 exit gate checked item by item'
+    depends_on: [M1-1.9]
+    refs: ['ADR-003', 'ADR-007', 'G-M1']
+    tags: [demo, adr]

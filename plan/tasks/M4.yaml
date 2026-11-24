@@ -1,0 +1,223 @@
+# Schema: see M0.yaml
+milestone: M4
+title: 'Quality: tests, accessibility, performance, CI/CD'
+list: 'M4 · Quality: tests, accessibility, performance, CI/CD'
+tasks:
+  # ---------------------------------------------------------------- Track 4A: Testing (weeks 12-13)
+  - id: M4-4.1
+    name: 'Component tests with a shared render helper'
+    track: 'Track 4A: Testing'
+    owner: esraa
+    work_type: testing
+    base_hours: 3
+    week: 12
+    priority: urgent
+    user_story: 'As a developer, I want component tests that run in both languages and directions, so that regressions are caught before a pull request merges.'
+    description: |
+      renderWithProviders (router, query client, i18n, direction). Tests for StatusBadge, Field and
+      the mark-paid form, and a wizard test with user-event. Query by role and label.
+    subtasks:
+      - '4.1.1 renderWithProviders (0.75)'
+      - '4.1.2 StatusBadge, Field, mark-paid form tests (1.25)'
+      - '4.1.3 Wizard test with user-event (1)'
+    acceptance_criteria:
+      - 'Tests query by role or label; no class or test-id queries without a comment'
+      - 'Wizard test covers the B1 member-count rejection'
+      - 'No fixed-timeout waits'
+    depends_on: [G-M3]
+    refs: ['SRS NFR-TST-01', 'AGENTS.md §6']
+    tags: [testing-library, components]
+
+  - id: M4-4.2
+    name: 'Integration tests with MSW for A5, A6, A7 and D2'
+    track: 'Track 4A: Testing'
+    owner: esraa
+    work_type: testing
+    base_hours: 2.5
+    week: 12
+    priority: urgent
+    user_story: 'As a developer, I want flow-level tests against the mock API, so that the rules the PRD promises are proven.'
+    description: |
+      Per-test MSW overrides for error cases: optimistic rollback on 500, role guard and
+      member-versus-organizer actions, organizer counts equal data, payout with reason.
+    subtasks:
+      - '4.2.1 Optimistic rollback on 500 (A6) (1)'
+      - '4.2.2 Role guard and role-specific actions (A7) (0.5)'
+      - '4.2.3 Organizer counts equal data (D2) (0.5)'
+      - '4.2.4 Payout with reason (A5) (0.5)'
+    acceptance_criteria:
+      - 'A5, A6, A7 and D2 each have a named passing test'
+      - 'Tests fail when the matching rule is removed'
+      - 'Tests use handler overrides, not module mocks'
+    depends_on: [M4-4.1]
+    refs: ['PRD A5, A6, A7, D2']
+    tags: [integration, msw]
+
+  - id: M4-4.3
+    name: 'Coverage gates and test review'
+    track: 'Track 4A: Testing'
+    owner: both
+    work_type: testing
+    base_hours: 1.5
+    week: 12
+    priority: high
+    user_story: 'As a mentor, I want gates and a pruned suite, so that tests stay valuable instead of brittle.'
+    description: |
+      Web coverage gate at 70% in CI, delete brittle tests, one-page write-up on what to test
+      and why.
+    subtasks:
+      - '4.3.1 Coverage gates, prune brittle tests, write-up (1.5)'
+    acceptance_criteria:
+      - 'CI fails below 70% web and 90% domain coverage'
+      - 'Write-up explains the test pyramid for this app'
+      - 'ADR-009 drafted'
+    depends_on: [M4-4.2]
+    refs: ['SRS NFR-MNT-01', 'ADR-009']
+    tags: [coverage, ci]
+
+  - id: M4-4.4
+    name: 'Playwright end-to-end: main flow and RTL 360 px flow'
+    track: 'Track 4A: Testing'
+    owner: esraa
+    work_type: testing
+    base_hours: 3
+    week: 13
+    priority: urgent
+    user_story: 'As a developer, I want the main flow tested in a real browser, so that I trust a deploy.'
+    description: |
+      Main flow: register, create, invite, activate, mark, confirm, payout. One RTL flow at
+      360 px with a screenshot assertion. Runs in CI with trace artifacts.
+    subtasks:
+      - '4.4.1 Main flow (2)'
+      - '4.4.2 RTL 360 px flow with screenshot assertion (0.5)'
+      - '4.4.3 CI run with trace artifacts (0.5)'
+    acceptance_criteria:
+      - 'Main flow passes in CI'
+      - 'E1: no horizontal scroll at 360 px'
+      - 'A failing run uploads a trace'
+    depends_on: [M4-4.3]
+    refs: ['PRD E1', 'SRS NFR-A11Y-02']
+    tags: [playwright, e2e]
+
+  # ---------------------------------------------------------------- Track 4B: Accessibility and debugging (week 13)
+  - id: M4-4.5
+    name: 'Accessibility audit: axe, keyboard, screen reader'
+    track: 'Track 4B: Accessibility and debugging'
+    owner: esraa
+    work_type: testing
+    base_hours: 2.5
+    week: 13
+    priority: urgent
+    user_story: 'As a keyboard or screen reader user, I want to finish the main flow unaided, so that the app is usable by everyone.'
+    description: |
+      axe inside Playwright on every P0 screen, keyboard-only walkthrough, screen reader pass on
+      two screens, fix list and contrast adjustments in tokens.
+    subtasks:
+      - '4.5.1 axe on every P0 screen (0.75)'
+      - '4.5.2 Keyboard-only walkthrough of the main flow (0.75)'
+      - '4.5.3 NVDA or VoiceOver pass on two screens (0.5)'
+      - '4.5.4 Fix list and contrast adjustments (0.5)'
+    acceptance_criteria:
+      - 'Zero serious or critical axe violations on P0 screens'
+      - 'E2: main flow completes by keyboard alone'
+      - 'Findings and fixes recorded in design/design-decisions.md'
+    depends_on: [M4-4.4]
+    refs: ['PRD E2', 'SRS NFR-A11Y-01, NFR-A11Y-02']
+    tags: [accessibility, axe]
+
+  - id: M4-4.6
+    name: 'Debugging toolkit: DevTools, React DevTools, source maps'
+    track: 'Track 4B: Accessibility and debugging'
+    owner: both
+    work_type: react
+    base_hours: 1.5
+    week: 13
+    priority: normal
+    user_story: 'As a student developer, I want a repeatable way to find bugs, so that I debug by evidence.'
+    description: |
+      Network, performance and memory panels, React DevTools, source maps. She fixes three bugs
+      the mentor seeded.
+    subtasks:
+      - '4.6.1 Reproduce and fix three seeded bugs with a written trace of each (1.5)'
+    acceptance_criteria:
+      - 'Each bug has reproduction steps, root cause and fix'
+      - 'She names the DevTools panel used for each'
+      - 'Each fix has a regression test'
+    depends_on: [M4-4.5]
+    refs: ['Plan §3']
+    tags: [debugging, devtools]
+
+  # ---------------------------------------------------------------- Track 4C: Performance and delivery (week 14)
+  - id: M4-4.7
+    name: 'Performance: baseline, splitting, profiling, React Compiler evaluation'
+    track: 'Track 4C: Performance and delivery'
+    owner: esraa
+    work_type: react
+    base_hours: 3
+    week: 14
+    priority: high
+    user_story: 'As a user on a mid-range phone, I want the app to load quickly, so that I can open it from WhatsApp without waiting.'
+    description: |
+      Lighthouse and WebPageTest baseline, bundle analysis and route-level splitting, profile one
+      re-render problem and fix it by measurement, evaluate React Compiler and record the result,
+      font and image loading, INP check.
+    subtasks:
+      - '4.7.1 Lighthouse and WebPageTest baseline (0.5)'
+      - '4.7.2 Bundle analyzer; route-level splitting (1)'
+      - '4.7.3 Profile and fix one re-render; evaluate React Compiler (1)'
+      - '4.7.4 Font and image loading strategy; INP check (0.5)'
+    acceptance_criteria:
+      - 'App shell initial JS under 200 kB gzip'
+      - 'LCP under 2.5 s, INP under 200 ms, CLS under 0.1 on the shell'
+      - 'No useMemo or useCallback without a measured reason in the PR'
+    depends_on: [M4-4.5]
+    refs: ['SRS NFR-PERF-01, NFR-PERF-02', 'PRD G4']
+    tags: [performance, lighthouse, bundle]
+
+  - id: M4-4.8
+    name: 'CI/CD: jobs, previews, releases, protected main'
+    track: 'Track 4C: Performance and delivery'
+    owner: esraa
+    work_type: devops
+    base_hours: 3
+    week: 14
+    priority: urgent
+    user_story: 'As a team, I want every pull request tested and previewed automatically, so that merging is safe and quick.'
+    description: |
+      Jobs for lint, typecheck, unit, build, e2e with a Node matrix and caching. Preview deploy
+      per pull request, release tags with changelog, Dependabot, required checks and approvals.
+    subtasks:
+      - '4.8.1 Jobs, Node matrix, caching (1)'
+      - '4.8.2 Preview deployment per pull request (1)'
+      - '4.8.3 Release tags, changelog, Dependabot (0.5)'
+      - '4.8.4 Required checks and approvals; write ADR-011 (0.5)'
+    acceptance_criteria:
+      - 'CI duration under 6 minutes on a pull request'
+      - 'Each pull request gets a preview URL'
+      - 'A tag produces a release with a changelog'
+    depends_on: [M4-4.4]
+    blocked_by_inputs: [IN-03]
+    refs: ['PRD §8', 'SRS NFR-MNT-02', 'ADR-011']
+    tags: [github-actions, cd, previews]
+
+  - id: M4-4.9
+    name: 'Frontend security review'
+    track: 'Track 4C: Performance and delivery'
+    owner: both
+    work_type: devops
+    base_hours: 1
+    week: 14
+    priority: high
+    user_story: 'As a maintainer, I want a checked list of frontend risks, so that no critical finding ships.'
+    description: |
+      CSP header on the host, dependency audit in CI, review of every place user text renders,
+      environment variable rules.
+    subtasks:
+      - '4.9.1 CSP, pnpm audit in CI, XSS review, env var rules (1)'
+    acceptance_criteria:
+      - 'No dangerouslySetInnerHTML anywhere in the repo'
+      - 'pnpm audit runs in CI and blocks on high severity'
+      - 'Zero critical items on the checklist (G-M4)'
+    depends_on: [M4-4.8]
+    refs: ['SRS NFR-SEC-01, NFR-SEC-02', 'AGENTS.md §9']
+    tags: [security, csp]

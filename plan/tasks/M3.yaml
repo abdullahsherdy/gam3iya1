@@ -1,0 +1,243 @@
+# Schema: see M0.yaml
+milestone: M3
+title: Routing, data layer, product flows
+list: 'M3 · Routing, data layer, product flows'
+tasks:
+  # ---------------------------------------------------------------- Track 3A: Routing and data (weeks 9-10)
+  - id: M3-3.1
+    name: 'Routing with React Router v7: nested layouts, lazy routes, boundaries'
+    track: 'Track 3A: Routing and data'
+    owner: esraa
+    work_type: ui
+    base_hours: 3
+    week: 9
+    priority: urgent
+    user_story: 'As a user, I want every screen at a stable URL with graceful errors, so that links from WhatsApp always land correctly.'
+    description: |
+      Route table from docs/scaffold.md, nested layouts with Outlet, lazy routes with Suspense,
+      route error boundary, 404, protected-route skeleton.
+    subtasks:
+      - '3.1.1 Route table from docs/scaffold.md (1)'
+      - '3.1.2 Nested layouts and lazy routes with Suspense (1)'
+      - '3.1.3 Error boundary, 404, protected-route skeleton (1)'
+    acceptance_criteria:
+      - 'Every route in the scaffold table resolves; unknown paths show S11 404'
+      - 'Route modules are lazy loaded'
+      - 'A thrown error in a route shows the boundary, not a blank screen'
+    depends_on: [G-M2, M1-1.7]
+    refs: ['docs/scaffold.md §3', 'SRS NFR-PERF-02', 'PRD E3']
+    tags: [routing, react-router]
+
+  - id: M3-3.2
+    name: 'Contracts package: Zod schemas, seed data, parse helper'
+    track: 'Track 3A: Routing and data'
+    owner: esraa
+    work_type: domain
+    base_hours: 2
+    week: 9
+    priority: urgent
+    user_story: 'As a developer, I want one source of truth for data shapes, so that mock API, client and forms never disagree.'
+    description: |
+      Zod schemas for entities and request and response payloads; typed seed matching Appendix A
+      (Mona, Karim, a late payment, an unconfirmed payment); parse helper used at every boundary.
+    subtasks:
+      - '3.2.1 Schemas for entities and payloads (1)'
+      - '3.2.2 Seed data matching PRD Appendix A (0.5)'
+      - '3.2.3 parse helper at every boundary (0.5)'
+    acceptance_criteria:
+      - 'Types are inferred from schemas; no hand-written duplicates'
+      - 'Seed parses without errors and reproduces A1 amounts'
+      - 'A malformed payload throws a typed error that the client handles'
+    depends_on: [M2-2.2]
+    refs: ['SRS §7, MOCK-04', 'PRD Appendix A']
+    tags: [contracts, zod, seed]
+
+  - id: M3-3.3
+    name: 'MSW mock backend: handlers, persisted store, latency and failures'
+    track: 'Track 3A: Routing and data'
+    owner: esraa
+    work_type: ui
+    base_hours: 2
+    week: 9
+    priority: urgent
+    user_story: 'As a student developer, I want a backend that behaves honestly, so that screens are built against real network behaviour.'
+    description: |
+      Handlers for circles, members and cycles following the SRS contract. Store in localStorage
+      under a versioned key with reset. Configurable latency and failure injection. Handlers
+      enforce BR-05, BR-07, roles and idempotency.
+    subtasks:
+      - '3.3.1 Handlers following the SRS contract (1)'
+      - '3.3.2 Persisted store with version key and reset (0.5)'
+      - '3.3.3 Latency and failure injection (0.5)'
+    acceptance_criteria:
+      - 'State survives a reload; Reset demo data restores the seed'
+      - 'A forbidden transition returns 409 problem+json'
+      - 'Out-of-scope circle id returns 404'
+      - 'Failure injection produces 500 on demand'
+    depends_on: [M3-3.2]
+    refs: ['SRS §6, MOCK-01 to MOCK-04', 'ADR-006']
+    tags: [msw, mock-api]
+
+  - id: M3-3.4
+    name: 'API client and TanStack Query reads with pagination'
+    track: 'Track 3A: Routing and data'
+    owner: esraa
+    work_type: react
+    base_hours: 3
+    week: 10
+    priority: urgent
+    user_story: 'As a user, I want fast, cached screens, so that navigation feels instant.'
+    description: |
+      Fetch wrapper with problem-details errors, Zod parsing and Idempotency-Key helper. Query
+      key factory, useCircles with infinite pagination, staleTime choices, devtools, prefetch on hover.
+    subtasks:
+      - '3.4.1 Fetch wrapper: problem+json, Zod parse, idempotency helper (1)'
+      - '3.4.2 Query key factory; useCircles with infinite pagination (1)'
+      - '3.4.3 staleTime choices, devtools, prefetch on hover (1)'
+    acceptance_criteria:
+      - 'No fetch call exists outside the API client'
+      - 'Pagination follows cursor and hasMore from the contract'
+      - 'Each staleTime choice is justified in ADR-005'
+    depends_on: [M3-3.3, M3-3.1]
+    refs: ['SRS FR-DASH-03, §6', 'ADR-005']
+    tags: [tanstack-query, api-client]
+
+  - id: M3-3.5
+    name: 'Mutations: mark, confirm, reject, record with optimistic updates'
+    track: 'Track 3A: Routing and data'
+    owner: esraa
+    work_type: react
+    base_hours: 3
+    week: 10
+    priority: urgent
+    user_story: 'As an organizer, I want actions to reflect instantly and recover safely, so that I can work through a list quickly.'
+    description: |
+      Mutation hooks with optimistic cache update and rollback, invalidation strategy, idempotency
+      key reused on retry, race test on two quick actions. Student-written zone.
+    subtasks:
+      - '3.5.1 Mark, confirm, reject, record hooks with optimistic update and rollback (1.5)'
+      - '3.5.2 Invalidation strategy documented in ADR-005 (0.5)'
+      - '3.5.3 One click sends one request; key reused on retry (0.5)'
+      - '3.5.4 Test two quick actions on the same payment (0.5)'
+    acceptance_criteria:
+      - 'Failure restores the previous cache value and shows a toast'
+      - 'Retry reuses the same Idempotency-Key'
+      - 'Two rapid actions leave a consistent state'
+    depends_on: [M3-3.4, M2-2.7]
+    refs: ['PRD C1, C2, A6', 'SRS FR-PAY-03 to FR-PAY-07']
+    tags: [mutations, optimistic, idempotency]
+
+  - id: M3-3.6
+    name: 'Loading, empty and error states on all data screens'
+    track: 'Track 3A: Routing and data'
+    owner: esraa
+    work_type: ui
+    base_hours: 1
+    week: 10
+    priority: high
+    user_story: 'As a user on a slow connection, I want clear feedback, so that I never face a blank screen.'
+    description: |
+      Skeletons, retry buttons and empty states following Figma S11 on every data screen.
+    subtasks:
+      - '3.6.1 Skeletons, retry and empty states per S11 on all data screens (1)'
+    acceptance_criteria:
+      - 'Every data screen has loading, empty and error variants (PRD E3)'
+      - 'Retry re-runs the failed query'
+      - 'Variants match S11'
+    depends_on: [M3-3.4]
+    refs: ['PRD E3', 'SRS FR-UI-01', 'Figma S11']
+    tags: [states, skeleton]
+
+  # ---------------------------------------------------------------- Track 3B: Product flows (week 11)
+  - id: M3-3.7
+    name: 'Auth flow: register, login, silent renewal, guards, roles'
+    track: 'Track 3B: Product flows'
+    owner: esraa
+    work_type: react
+    base_hours: 2.5
+    week: 11
+    priority: urgent
+    user_story: 'As a user, I want to sign in once and stay signed in safely, so that I can use the app without friction.'
+    description: |
+      Register and login against the mock, in-memory session, silent renewal once on 401,
+      route guards with return-to, logout clears the cache, role-aware UI and demo switcher.
+      Student-written zone; mentor reviews.
+    subtasks:
+      - '3.7.1 Register and login forms; session in memory; silent renewal (1.25)'
+      - '3.7.2 Route guards with return-to; logout clears cache (0.75)'
+      - '3.7.3 Role-aware UI and demo switcher (0.5)'
+    acceptance_criteria:
+      - 'A1: duplicate email and short password show clear errors'
+      - 'A2: expired session renews once; after logout protected routes redirect'
+      - 'A7: Karim sees no organizer actions; Mona does'
+    depends_on: [M3-3.5, M3-3.1]
+    refs: ['PRD A1, A2', 'SRS FR-AUTH-01 to FR-AUTH-07']
+    tags: [auth, guards, roles]
+
+  - id: M3-3.8
+    name: 'Invites, join and activation flows (B2 to B4)'
+    track: 'Track 3B: Product flows'
+    owner: esraa
+    work_type: ui
+    base_hours: 1.5
+    week: 11
+    priority: urgent
+    user_story: 'As an organizer, I want to invite members and activate the circle, so that the schedule is generated and locked.'
+    description: |
+      Invite link with expiry and copy, join page S12 with refusal states, keyboard reordering,
+      random draw with commitment, activate with a disabled-reason.
+    subtasks:
+      - '3.8.1 Invite link, copy, join page with refusal states (0.75)'
+      - '3.8.2 Reordering, draw, activate with disabled-reason (0.75)'
+    acceptance_criteria:
+      - 'Activate is disabled with the reason while a slot is empty'
+      - 'After activation the order is read-only'
+      - 'Expired, full and activated links show distinct messages'
+    depends_on: [M3-3.7]
+    refs: ['PRD B2, B3, B4', 'SRS FR-MEM-01 to FR-MEM-04, FR-CIR-04, FR-CIR-05']
+    tags: [invites, activation]
+
+  - id: M3-3.9
+    name: 'Dashboards and organizer cycle view (C1 to C4, D1, D2)'
+    track: 'Track 3B: Product flows'
+    owner: esraa
+    work_type: ui
+    base_hours: 2
+    week: 11
+    priority: urgent
+    user_story: "As an organizer, I want one view of every member's status per cycle with the right actions, so that I never ask who has not paid."
+    description: |
+      Member dashboard with derived status badges through paymentView. Organizer matrix with
+      confirm, reject with reason, record, and a payout dialog with the reason flow.
+    subtasks:
+      - '3.9.1 Member dashboard and derived badges (0.75)'
+      - '3.9.2 Organizer matrix, reject reason, record, payout dialog (1.25)'
+    acceptance_criteria:
+      - 'D2: counts on screen equal counts computed from the data'
+      - 'A5: payout with an unconfirmed payment requires a reason'
+      - 'Lateness is computed by paymentView, never read from the API'
+    depends_on: [M3-3.8, M2-2.3]
+    refs: ['PRD C1 to C4, D1, D2', 'SRS FR-OUT-01 to FR-OUT-04, FR-DASH-01, FR-DASH-02']
+    tags: [dashboard, organizer, payout]
+
+  - id: M3-3.10
+    name: 'Notifications and history views (D3, G3)'
+    track: 'Track 3B: Product flows'
+    owner: esraa
+    work_type: ui
+    base_hours: 1
+    week: 11
+    priority: high
+    user_story: 'As a user, I want reminders and a visible history, so that every financial change is explainable.'
+    description: |
+      Reminders derived from the schedule two days before due and when late, once per event;
+      mark as read; read-only history list. Corrections UI (C5) is a P1 stretch.
+    subtasks:
+      - '3.10.1 Derived reminders, mark read, history list (1)'
+    acceptance_criteria:
+      - 'One reminder per event; marking read persists'
+      - 'History shows actor, time, action and reason; flagged payouts are marked'
+      - 'M3 exit demo run as Mona and Karim end to end'
+    depends_on: [M3-3.9]
+    refs: ['PRD D3, G3', 'SRS FR-NOT-01, FR-NOT-02, FR-AUD-01, FR-AUD-02']
+    tags: [notifications, history]
